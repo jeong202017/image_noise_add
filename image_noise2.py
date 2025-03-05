@@ -74,32 +74,56 @@ def add_correlated_noise(image, intensity=0.1):
 #     striped_image = np.clip(striped_image, 0, 255)
 #     return Image.fromarray(striped_image.astype(np.uint8))
 
-# 노이즈 적용 함수
-def apply_noise():
+# 노이즈 적용 함수 (imshow ver)
+# def apply_noise():
+#     gaussian_intensity = 0.1
+#     correlated_intensity = 0.01
+#     # sap_intensity
+#     # striped_intensity 
+
+#     global gaussian_noisy_image, correlated_noisy_image, combined_gaussian_corr_image
+#     global sap_noisy_image, striped_noisy_image
+
+#     gaussian_noisy_image = add_gaussian_noise(original_image, intensity=gaussian_intensity)
+#     correlated_noisy_image = add_correlated_noise(original_image, intensity=correlated_intensity)
+#     combined_gaussian_corr_image = add_correlated_noise(gaussian_noisy_image, intensity=correlated_intensity)
+
+#     # sap_image = add_salt_and_pepper_noise( input_image ,sap_intensity )
+#     # striped_image = def add_striped_noise_fixed( input_image, striped_intensity )
+
+#     # OpenCV는 NumPy 배열을 필요로 함
+#     # OpenCV는 BGR을 사용하므로 RGB → BGR 변환 필요
+#     cv2.imshow("Noisy Image", cv2.cvtColor(np.array(combined_gaussian_corr_image), cv2.COLOR_RGB2BGR))
+#     cv2.waitKey(0)
+#     cv2.destroyAllWindows()
+
+# 노이즈 적용 및 FileStorage에 저장하는 함수
+def apply_noise_and_store():
     gaussian_intensity = 0.1
     correlated_intensity = 0.01
-    # sap_intensity
-    # striped_intensity 
-
-    global gaussian_noisy_image, correlated_noisy_image, combined_gaussian_corr_image
-    global sap_noisy_image, striped_noisy_image
-
+    
+    # 노이즈 추가
     gaussian_noisy_image = add_gaussian_noise(original_image, intensity=gaussian_intensity)
-    correlated_noisy_image = add_correlated_noise(original_image, intensity=correlated_intensity)
+    # correlated_noisy_image = add_correlated_noise(original_image, intensity=correlated_intensity)
     combined_gaussian_corr_image = add_correlated_noise(gaussian_noisy_image, intensity=correlated_intensity)
-
-    # sap_image = add_salt_and_pepper_noise( input_image ,sap_intensity )
-    # striped_image = def add_striped_noise_fixed( input_image, striped_intensity )
-
-    # OpenCV는 NumPy 배열을 필요로 함
-    # OpenCV는 BGR을 사용하므로 RGB → BGR 변환 필요
-    cv2.imshow("Noisy Image", cv2.cvtColor(np.array(combined_gaussian_corr_image), cv2.COLOR_RGB2BGR))
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    
+    # # NumPy 배열로 변환
+    # gaussian_noisy_np = np.array(gaussian_noisy_image)
+    # correlated_noisy_np = np.array(correlated_noisy_image)
+    combined_noisy_np = np.array(combined_gaussian_corr_image)
+    
+    # OpenCV FileStorage 객체 생성 및 저장
+    fs = cv2.FileStorage("noisy_images.yml", cv2.FILE_STORAGE_WRITE)
+    # fs.write("gaussian_noisy", gaussian_noisy_np)
+    # fs.write("correlated_noisy", correlated_noisy_np)
+    fs.write("combined_noisy", combined_noisy_np)
+    fs.release()
+    
+    return "noisy_images.yml"
 
 # 실행
 def main():
-    apply_noise()
+    apply_noise_and_store()
 
 if __name__ == '__main__':
     main()
